@@ -12,6 +12,7 @@
     "type-check": "turbo type-check",
     "create:web": "node scripts/create-web.mjs",
     "create:desktop": "node scripts/create-desktop.mjs",
+    "create:cron-worker": "node scripts/create-cron-worker.mjs",
     "create:mobile": "node scripts/create-mobile.mjs",
     "create:worker": "node scripts/create-worker.mjs",
     "create:node-service": "node scripts/create-node-service.mjs"
@@ -22,7 +23,7 @@
   },
   "pnpm": {
     "overrides": {
-      "rollup": "3.29.4"
+      "tsup>rollup": "3.29.4"
     }
   }
 }

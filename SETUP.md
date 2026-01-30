@@ -71,18 +71,16 @@ Browser globals (window)
 Worker-only bindings
 
 Reason: Apps run in different runtimes (Node / Edge / Native).
-
 5. Dependency Consistency Rules
 
-We enforce identical versions using Syncpack:
+Syncpack is intentionally removed.
 
-pnpm sync:check
-pnpm sync:fix
+Version stability is enforced through:
 
-
-React must be provided by apps, not shared packages.
-
-Shared UI packages must declare React as a peer dependency.
+- pinned tool versions (Node + pnpm)
+- lockfile reproducibility
+- peerDependencies (React never duplicated)
+- CI type-check + build enforcement
 
 6. Adding New Applications (Reliable Process)
 

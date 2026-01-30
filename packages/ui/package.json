@@ -19,7 +19,7 @@
   },
 
   "scripts": {
-    "build": "tsup src/index.tsx --format esm --dts"
+    "build": "tsup"
   },
 
   "devDependencies": {

@@ -25,10 +25,9 @@ Create the authoritative root package.json for the template.
 - Updated turbo.json accordingly
 - Verified template matches Turbo v2.8.0 config rules
 
-## Step T1.4 Completed
-- Added syncpack.config.cjs
-- Enforced strict dependency version consistency across workspace
-- Declared React peer dependency rules to prevent duplicate runtimes
+Dependency Stability Policy
+- Syncpack removed due to workspace protocol friction
+- Stability enforced through pnpm lockfile + CI validation
 
 ## Step T1.5 Completed
 - Added default GitHub Actions CI workflow
