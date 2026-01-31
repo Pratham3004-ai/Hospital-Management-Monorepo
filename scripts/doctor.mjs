@@ -183,6 +183,18 @@ if (!fs.existsSync(lockfilePath)) {
   }
 }
 
+console.log("\n🔎 Checking React dependency law...");
+
+const uiPkg = JSON.parse(
+  fs.readFileSync("packages/ui/package.json", "utf8")
+);
+
+if (uiPkg.dependencies?.react) {
+  fail("packages/ui must NOT list react in dependencies — only peerDependencies.");
+}
+
+ok("React peer dependency law upheld (UI does not bundle React).");
+
 /* --------------------------------------------
  * Final Success
  * ------------------------------------------ */

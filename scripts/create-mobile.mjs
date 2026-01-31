@@ -52,6 +52,15 @@ execSync("pnpm add -D @studiovault/typescript-config --workspace", {
   stdio: "inherit",
 });
 
+/**
+ * Step 3.5: Align React versions with root overrides
+ * Expo SDK 54 requires React 19, enforcing upward alignment.
+ * Root pnpm.overrides ensures exact version (19.2.3).
+ */
+console.log("\n✅ Aligning dependencies with root overrides...");
+
+execSync("pnpm install", { stdio: "inherit" });
+
 console.log("\n✅ Expo config preserved (no tsconfig overwrite).");
 
 console.log("\n🎉 Mobile app created successfully!");

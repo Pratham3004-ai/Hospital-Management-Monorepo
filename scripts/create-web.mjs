@@ -58,6 +58,15 @@ execSync(
 );
 
 /**
+ * Step 3.5: Align React versions with root overrides
+ * Root pnpm.overrides pins react@19.2.3, ensuring constitutional alignment.
+ * Upstream scaffolds may install different versions; overrides correct this.
+ */
+console.log("\n✅ Aligning dependencies with root overrides...");
+
+execSync("pnpm install", { stdio: "inherit" });
+
+/**
  * Step 4: Patch next.config.ts safely
  */
 console.log("\n✅ Checking next.config.ts for monorepo compatibility...");

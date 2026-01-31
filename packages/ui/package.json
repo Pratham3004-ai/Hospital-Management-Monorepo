@@ -2,31 +2,24 @@
   "name": "@studiovault/ui",
   "version": "1.0.0",
   "private": true,
-
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "source": "./src/index.tsx",
-
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
-
   "peerDependencies": {
-    "react": "18.x",
-    "react-dom": "18.x"
+    "react": "19.x",
+    "react-dom": "19.x"
   },
-
   "scripts": {
     "build": "tsup"
   },
-
   "devDependencies": {
     "@studiovault/typescript-config": "workspace:^",
-    "tsup": "8.5.0",
-    "@types/react": "18.3.24",
-    "@types/react-dom": "18.3.7"
+    "tsup": "8.5.0"
   }
 }
