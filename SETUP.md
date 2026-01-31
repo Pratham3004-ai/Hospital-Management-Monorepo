@@ -1,163 +1,288 @@
-# StudioVault Monorepo Setup (Single Source of Truth)
+# React Complete Monorepo Template (StudioVault)
 
-This repository is a multi-platform monorepo built for:
+This repository is a reusable, infrastructure-first monorepo template designed to spawn modern applications across multiple runtimes:
 
-- Web (Next.js)
-- Desktop (Electron + Vite)
-- Mobile (Expo React Native)
-- Backend (Cloudflare Workers / API)
+- **Web** → Next.js  
+- **Desktop** → Electron + Vite  
+- **Mobile** → Expo React Native  
+- **Edge Backend** → Cloudflare Workers  
+- **Background Compute** → Node Processor (Lambda / Cloud Run style)
 
-The entire system is designed to be reproducible and version-stable.
+This is not a single product repository.
+
+This is a **starter system** meant to be reused across many future projects.
+
+The purpose is simple:
+
+> Ship applications without tooling hell.
 
 ---
 
-## 1. Machine Requirements (Hard Locked)
+# ✅ Core Philosophy
 
-These must be installed globally before working on this repo:
+This monorepo optimizes for:
 
-| Tool | Version | Notes |
-|------|---------|------|
-| Node.js | 20.20.x LTS | Installed via official MSI only |
-| pnpm | 9.15.4 | Installed globally via npm |
+- Windows stability
+- Reproducibility across machines
+- Minimal tool fighting
+- Official scaffolding only
+- Shared code that works everywhere
+- Long-term template survivability
 
-### Verify
+These rules are not preferences.
+
+They are survival constraints.
+
+---
+
+# ✅ Toolchain Lock (Non-Negotiable)
+
+This template is stable only under a fixed toolchain.
+
+You **must** use:
+
+| Tool     | Version |
+|----------|---------|
+| Node.js  | **20.20.x LTS** |
+| pnpm     | **9.15.4** |
+
+Root enforcement exists in `package.json`:
+
+```json
+"packageManager": "pnpm@9.15.4",
+"engines": { "node": "20.x" }
+````
+
+This prevents invisible drift.
+
+Forbidden:
+
+* nvm-windows
+* corepack pnpm switching
+* multiple Node installs
+
+---
+
+# ✅ Repository Structure (Canonical)
+
+This template has one official layout:
+
+```txt
+apps/
+  web/         → Next.js apps (spawned)
+  desktop/     → Electron apps (spawned)
+  mobile/      → Expo apps (spawned)
+
+  api/         → Cloudflare HTTP Workers (spawned)
+  cron/        → Cloudflare Scheduled Workers (spawned)
+
+  node/
+    processor/ → Permanent background compute layer
+
+packages/
+  typescript-config → Shared TS configs
+  eslint-config     → Shared lint rules
+  prettier-config   → Shared formatting
+
+  types             → Runtime-agnostic contracts
+  utils             → Runtime-agnostic helpers
+  ui                → Shared React component library
+
+  database          → Schema/contracts only
+  storage           → Storage contracts only
+
+scripts/
+  create-web.mjs
+  create-desktop.mjs
+  create-mobile.mjs
+  create-worker.mjs
+  create-cron-worker.mjs
+
+rules/
+  → The Constitution (mandatory)
+```
+
+This structure must remain stable forever.
+
+---
+
+# ✅ Shared Packages Rule (Critical)
+
+All code under:
+
+```txt
+packages/*
+```
+
+must remain **runtime-agnostic**.
+
+Shared packages MUST NOT import:
+
+* `fs`
+* `path`
+* Node-only APIs
+* Worker-only bindings
+* Browser globals (`window`, `document`)
+
+Allowed content:
+
+* pure utilities
+* TypeScript contracts
+* schema definitions
+* shared React UI components
+* portable constants
+
+Reason:
+
+Apps run under incompatible runtimes.
+Shared code must survive all of them.
+
+---
+
+# ✅ Build Output Contract (`dist/` Is Mandatory)
+
+All buildable shared packages must emit to:
+
+```txt
+dist/
+```
+
+No exceptions.
+
+Build artifacts must always be predictable.
+
+---
+
+# ✅ Windows Stability Doctrine (Tsup + Rollup)
+
+Shared packages build with `tsup`.
+
+Rollup v4 introduced optional native binaries that frequently break on Windows.
+
+Permanent fix:
+
+```json
+"pnpm": {
+  "overrides": {
+    "tsup>rollup": "3.29.4"
+  }
+}
+```
+
+This override is sacred.
+
+It is scoped to tsup only.
+
+Do NOT replace it with a global Rollup pin, because tools like Vite require modern Rollup versions.
+
+---
+
+# ✅ App Creation Policy (Scripts Only)
+
+Humans must never copy/paste apps manually.
+
+All apps must be created only through the official scripts:
 
 ```bash
-node -v
-pnpm -v
+pnpm create:web my-web
+pnpm create:desktop my-desktop
+pnpm create:mobile my-mobile
 
+pnpm create:worker auth
+pnpm create:cron-worker cleanup --cron "0 */5 * * *"
+```
 
-Expected:
+Scripts exist because upstream scaffolds drift over time.
 
-Node: v20.20.x
+They guarantee:
 
-pnpm: 9.15.4
-
-2. Repo Version Enforcement
-
-Root package.json contains:
-
-"packageManager": "pnpm@9.15.4"
-
-"engines": { "node": "20.x" }
-
-This prevents toolchain drift across machines.
-
-3. Workspace Layout
-apps/        # Platform applications
-packages/    # Shared runtime-agnostic libraries
-agents/      # Sequential project documentation
-scripts/     # Official scaffolding automation
-rules/       # Global coding + stack rules
-
-4. Shared Package Runtime Rules (Critical)
-
-Shared packages MUST remain portable:
-
-✅ Allowed:
-
-Pure TypeScript helpers
-
-Types, schemas, validation
-
-API clients
-
-❌ Forbidden:
-
-Node-only imports (fs, path)
-
-Browser globals (window)
-
-Worker-only bindings
-
-Reason: Apps run in different runtimes (Node / Edge / Native).
-5. Dependency Consistency Rules
-
-Syncpack is intentionally removed.
-
-Version stability is enforced through:
-
-- pinned tool versions (Node + pnpm)
-- lockfile reproducibility
-- peerDependencies (React never duplicated)
-- CI type-check + build enforcement
-
-6. Adding New Applications (Reliable Process)
-
-All new apps must be created ONLY via official CLIs:
-
-Web: pnpm create next-app
-
-Desktop: pnpm create vite
-
-Mobile: pnpm create expo-app
-
-Worker/API: pnpm create cloudflare
-
-Do NOT copy/paste app templates manually.
-
-After creation:
-
-Add required shared deps via workspace protocol
-
-Run pnpm install
-
-Document creation in that app’s /agents/
-
-7. Automation Scripts
-
-The scripts/ folder contains wrappers that:
-
-Call official CLIs
-
-Apply StudioVault defaults
-
-Prevent inconsistent setups
-
-Example (future):
-
-pnpm create:web studio-web
-pnpm create:desktop studio-desktop
-
-
-These scripts are the only allowed shortcut.
-
-
-
-This is now part of the constitution.
+* correct folder placement
+* workspace dependency wiring
+* safe tsconfig patching
+* monorepo compatibility
 
 ---
 
-# ✅ Step T2.9 Completed Properly
+# ✅ Worker Trigger Split (HTTP vs Cron)
 
-`packages/utils` is now:
+Workers are strictly divided:
 
-- runtime-agnostic
-- buildable with tsup
-- dist-ready
-- stable on Windows
+* `apps/api/*` → HTTP request Workers only (`fetch`)
+* `apps/cron/*` → Scheduled Workers only (`scheduled`)
 
----
+One cron worker = one cron schedule.
 
-# ✅ Next Step: `packages/ui` (React Component Library)
-
-Now we create the shared UI package.
-
-Rules:
-
-- React is a peerDependency (never bundled)
-- Uses tsup build
-- Extends react.json TS config
-- Runtime safe (no Node APIs)
-
-We’ll do 3 small files next:
-
-1. `packages/ui/package.json`
-2. `packages/ui/tsconfig.json`
-3. `packages/ui/src/index.ts`
+Never mix triggers.
 
 ---
 
-## ✅ File 1 — `packages/ui/package.json`
+# ✅ Permanent Node Processor Layer
 
-mkdir -p packages/ui/src
+The Node processor exists permanently at:
+
+```txt
+apps/node/processor
+```
+
+It is not spawned repeatedly.
+
+It is the canonical background compute engine for:
+
+* exports
+* analytics
+* PDF generation
+* long pipelines
+* heavy processing jobs
+
+Job logic remains vendor-neutral.
+
+Runtime adapters exist for:
+
+* AWS Lambda
+* Google Cloud Run
+
+---
+
+# ✅ Mandatory Next Step: Read the Constitution
+
+All non-negotiable laws live in:
+
+```txt
+rules/
+```
+
+Start here:
+
+```txt
+rules/00-constitution.md
+```
+
+Nothing in this repository should be modified without understanding those rules.
+
+---
+
+# ✅ Validation Commands
+
+After cloning:
+
+```bash
+pnpm install
+pnpm build
+pnpm type-check
+pnpm lint
+```
+
+If these are green, the template is healthy.
+
+---
+
+# ✅ Template Goal
+
+This repository exists to prevent the most common failure mode:
+
+> Tooling complexity outgrowing the product.
+
+Infrastructure is here only to support shipping applications.
+
+Not to become the application.
+

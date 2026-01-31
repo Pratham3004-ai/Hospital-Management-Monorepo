@@ -6,7 +6,7 @@
   "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },

@@ -16,11 +16,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "pnpm" # ✅ Makes installs dramatically faster
 
       - name: Install pnpm (9.15.4)
         run: npm install -g pnpm@9.15.4
 
-      - name: Install dependencies
+      - name: Install dependencies (frozen lockfile)
         run: pnpm install --frozen-lockfile
 
       - name: TypeScript type-check

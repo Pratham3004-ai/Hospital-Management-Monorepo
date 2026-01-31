@@ -5,35 +5,61 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * StudioVault API Worker Creator
+ * StudioVault Cron Worker Creator
  *
  * Usage:
- *   pnpm create:worker edge
- *   pnpm create:worker auth
+ *   pnpm create:cron-worker cleanup --cron "0 * /5 * * *"(there is no space between the * and / in * /5 , it is stuffed so that the comment does not break)
+ *   pnpm create:cron-worker sync --cron "* /30 * * * *"
+ *   pnpm create:cron-worker daily --cron "0 2 * * *"
  *
  * Creates:
- *   apps/api/<name>
+ *   apps/cron/<name>
  *
  * Guarantees:
  * - Official Cloudflare CLI only
- * - HTTP-only Worker (no cron triggers)
  * - Installs shared workspace deps
+ * - Adds StudioVault TS config devDependency
  * - Patches tsconfig to extend monorepo baseline
- * - Writes fetch() entrypoint
+ * - Adds cron trigger into wrangler.jsonc
+ * - Writes scheduled-only entrypoint
  */
 
 const args = process.argv.slice(2);
+
 const workerName = args[0];
+const cronFlagIndex = args.indexOf("--cron");
+const cronExpr = cronFlagIndex !== -1 ? args[cronFlagIndex + 1] : null;
 
 if (!workerName) {
-  console.error("❌ Missing worker name.");
-  console.error("Usage: pnpm create:worker <name>");
-  process.exit(1);
+    console.error("❌ Missing worker name.");
+    console.error(
+        'Usage: pnpm create:cron-worker <name> --cron "*/30 * * * *"',
+    );
+    process.exit(1);
+}
+
+if (!cronExpr) {
+    console.error("❌ Missing --cron argument.");
+    console.error(
+        'Example: pnpm create:cron-worker cleanup --cron "0 */5 * * *"',
+    );
+    process.exit(1);
+}
+
+/**
+ * Basic cron validation: must be 5 fields
+ */
+const cronParts = cronExpr.trim().split(/\s+/);
+if (cronParts.length !== 5) {
+    console.error("❌ Invalid cron expression:", cronExpr);
+    console.error("Cron must have exactly 5 fields:");
+    console.error('Example: "*/30 * * * *"');
+    process.exit(1);
 }
 
 /**
  * Folder Convention:
- * apps/api/<workerName>
+ * apps/cron/<workerName>
  */
 const appDirName = workerName;
 
@@ -41,18 +67,31 @@ const appDirName = workerName;
  * Ensure folders exist
  */
 if (!fs.existsSync("apps")) fs.mkdirSync("apps");
-if (!fs.existsSync(path.join("apps", "api")))
-  fs.mkdirSync(path.join("apps", "api"));
+if (!fs.existsSync(path.join("apps", "cron")))
+    fs.mkdirSync(path.join("apps", "cron"));
 
-console.log("✅ Creating StudioVault API Worker:", appDirName);
+console.log("✅ Creating StudioVault Cron Worker:", appDirName);
+console.log("⏱️ Schedule:", cronExpr);
 
 /**
  * Step 1: Scaffold Worker with official Cloudflare CLI
  */
-process.chdir(path.join("apps", "api"));
+process.chdir(path.join("apps", "cron"));
+
+console.log(`
+Cloudflare CLI will prompt you.
+
+Select:
+- ** Hello World example **
+- ** Worker only **
+- ** TypeScript **
+- ** Git: Yes **
+- ** Deploy: No **
+`);
+
 
 execSync(`pnpm create cloudflare@latest ${appDirName}`, {
-  stdio: "inherit",
+    stdio: "inherit",
 });
 
 /**
@@ -66,11 +105,11 @@ process.chdir(appDirName);
 console.log("\n✅ Installing shared StudioVault workspace dependencies...");
 
 execSync("pnpm add @studiovault/utils @studiovault/types --workspace", {
-  stdio: "inherit",
+    stdio: "inherit",
 });
 
 execSync("pnpm add -D @studiovault/typescript-config --workspace", {
-  stdio: "inherit",
+    stdio: "inherit",
 });
 
 /**
@@ -97,50 +136,56 @@ fs.writeFileSync(
 
 
 /**
- * Step 5: Ensure wrangler.jsonc has NO triggers
+ * Step 5: Patch wrangler.jsonc with cron trigger
  */
-console.log("✅ Ensuring HTTP-only worker (no cron triggers)...");
+console.log("✅ Patching wrangler.jsonc with cron schedule...");
 
 const wranglerConfigPath = "wrangler.jsonc";
 
-if (fs.existsSync(wranglerConfigPath)) {
-  const raw = fs.readFileSync(wranglerConfigPath, "utf8");
-
-  // Remove triggers block if present
-  const cleaned = raw.replace(
-    /,\s*"triggers"\s*:\s*\{[\s\S]*?\}\s*/g,
-    ""
-  );
-
-  fs.writeFileSync(wranglerConfigPath, cleaned);
+if (!fs.existsSync(wranglerConfigPath)) {
+    console.error("❌ wrangler.jsonc not found. Cloudflare template changed.");
+    process.exit(1);
 }
 
+const raw = fs.readFileSync(wranglerConfigPath, "utf8");
+let patched = raw;
+
+if (!raw.includes('"triggers"')) {
+    patched = raw.replace(
+        /"compatibility_date":\s*"([^"]+)",?/,
+        `"compatibility_date": "$1",\n\n  "triggers": {\n    "crons": ["${cronExpr}"]\n  },`,
+    );
+}
+
+fs.writeFileSync(wranglerConfigPath, patched);
+
 /**
- * Step 6: Write HTTP fetch() worker entry
+ * Step 6: Write scheduled-only worker entry
  */
-console.log("✅ Writing API worker entry...");
+console.log("✅ Writing scheduled worker entry...");
+
+const entryPath = path.join("src", "index.ts");
 
 fs.writeFileSync(
-  path.join("src", "index.ts"),
-  `import { slugify } from "@studiovault/utils";
-import type { ApiResponse } from "@studiovault/types";
+    entryPath,
+    `import { slugify } from "@studiovault/utils";
 
 export default {
-  async fetch(): Promise<Response> {
-    const value = slugify("StudioVault API Worker: ${appDirName}");
+  /**
+   * StudioVault Cron Worker
+   * Schedule: ${cronExpr}
+   */
+  async scheduled(): Promise<void> {
+    const name = slugify("${appDirName}");
+    console.log("⏱️ Cron tick from:", name);
 
-    const body: ApiResponse<string> = {
-      success: true,
-      data: value
-    };
-
-    return Response.json(body);
+    // TODO: Implement scheduled job here
   }
 };
-`
+`,
 );
 
-console.log("\n🎉 API Worker created successfully!");
+console.log("\n🎉 Cron Worker created successfully!");
 console.log("Next steps:");
-console.log(`cd apps/api/${appDirName}`);
+console.log(`cd apps/cron/${appDirName}`);
 console.log("pnpm dev");

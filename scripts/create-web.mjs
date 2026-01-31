@@ -3,12 +3,13 @@
 /**
  * StudioVault Web App Creator (Next.js + Tailwind)
  *
- * Creates a monorepo-safe Next.js app under /apps.
- * Automatically installs shared packages and patches next.config.ts.
+ * Creates a monorepo-safe Next.js app under /apps/web.
+ * Installs shared packages and patches Next.js config safely.
  */
 
 import { execSync } from "node:child_process";
 import fs from "node:fs";
+import path from "node:path";
 
 const appName = process.argv[2];
 
@@ -19,14 +20,15 @@ if (!appName) {
 }
 
 /**
- * Step 1: Ensure /apps exists
+ * Step 1: Ensure /apps/web exists
  */
 if (!fs.existsSync("apps")) fs.mkdirSync("apps");
-const baseDir = path.join("apps", "web");
 
+const baseDir = path.join("apps", "web");
 if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir, { recursive: true });
+
 /**
- * Step 2: Scaffold Next.js app (Windows-safe: run inside /apps)
+ * Step 2: Scaffold Next.js app (official CLI)
  */
 process.chdir(baseDir);
 
@@ -44,7 +46,7 @@ execSync(
 );
 
 /**
- * Step 3: Install StudioVault shared workspace packages
+ * Step 3: Install shared StudioVault workspace packages
  */
 process.chdir(appName);
 
@@ -56,16 +58,29 @@ execSync(
 );
 
 /**
- * Step 4: Patch next.config.ts for monorepo transpilation
+ * Step 4: Patch next.config.ts safely
  */
-console.log("\n✅ Patching next.config.ts for workspace compatibility...");
+console.log("\n✅ Checking next.config.ts for monorepo compatibility...");
 
 const nextConfigPath = "next.config.ts";
 
-if (fs.existsSync(nextConfigPath)) {
-  fs.writeFileSync(
-    nextConfigPath,
-    `import type { NextConfig } from "next";
+if (!fs.existsSync(nextConfigPath)) {
+  console.warn("⚠️ next.config.ts not found. Next.js template may have changed.");
+  console.warn("⚠️ Please add transpilePackages manually.");
+  process.exit(0);
+}
+
+const raw = fs.readFileSync(nextConfigPath, "utf8");
+
+/**
+ * If already patched, do nothing.
+ */
+if (raw.includes("transpilePackages")) {
+  console.log("✅ next.config.ts already contains transpilePackages. Skipping patch.");
+} else {
+  console.log("✅ Applying StudioVault transpilePackages patch...");
+
+  const patched = `import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /**
@@ -75,18 +90,21 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@studiovault/ui",
     "@studiovault/utils",
-    "@studiovault/types",
+    "@studiovault/types"
   ],
 };
 
 export default nextConfig;
-`
-  );
-} else {
-  console.warn("⚠️ next.config.ts not found, skipping patch.");
+`;
+
+  fs.writeFileSync(nextConfigPath, patched);
+  console.log("✅ next.config.ts patched successfully.");
 }
 
-console.log("\n✅ Web app fully ready.");
+/**
+ * Final Output
+ */
+console.log("\n🎉 Web app created successfully!");
 console.log("Next steps:");
-console.log(`cd apps/${appName}`);
+console.log(`cd apps/web/${appName}`);
 console.log("pnpm dev");
