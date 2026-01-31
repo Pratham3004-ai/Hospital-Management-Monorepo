@@ -6,6 +6,8 @@ settings:
 
 overrides:
   tsup>rollup: 3.29.4
+  react: 18.3.1
+  react-dom: 18.3.1
 
 importers:
 
@@ -94,10 +96,10 @@ importers:
   packages/ui:
     dependencies:
       react:
-        specifier: 18.x
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: 18.x
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@studiovault/typescript-config':
@@ -863,7 +865,7 @@ packages:
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
-      react: ^18.3.1
+      react: 18.3.1
 
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
