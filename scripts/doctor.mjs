@@ -166,7 +166,7 @@ if (!fs.existsSync(lockfilePath)) {
    * This regex ensures "react@" is NOT preceded by "@types/"
    */
   const matches =
-    rawLock.match(/(?<!@types\/)react@18\.[0-9]+\.[0-9]+/g) || [];
+    rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
 
   const unique = [...new Set(matches)];
 

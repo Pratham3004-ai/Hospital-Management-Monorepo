@@ -64,7 +64,7 @@ execSync(
  */
 console.log("\n✅ Aligning dependencies with root overrides...");
 
-execSync("pnpm install", { stdio: "inherit" });
+execSync("pnpm install -w", { stdio: "inherit" });
 
 /**
  * Step 4: Patch next.config.ts safely

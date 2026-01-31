@@ -59,7 +59,7 @@ execSync("pnpm add -D @studiovault/typescript-config --workspace", {
  */
 console.log("\n✅ Aligning dependencies with root overrides...");
 
-execSync("pnpm install", { stdio: "inherit" });
+execSync("pnpm install -w", { stdio: "inherit" });
 
 console.log("\n✅ Expo config preserved (no tsconfig overwrite).");
 
