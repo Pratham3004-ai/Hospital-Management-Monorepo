@@ -53,13 +53,16 @@ execSync("pnpm add -D @studiovault/typescript-config --workspace", {
 });
 
 /**
- * Step 3.5: Align React versions with root overrides
- * Electron-Vite scaffold may install React 18.x; root overrides correct to 19.2.3.
- * Constitutional enforcement via pnpm.overrides.
+ * Step 3.5: Enforce constitutional React version
+ * Electron-Vite defaults to React 18.x, we force upward to 19.1.0.
+ * Root pnpm.overrides ensures exact version.
  */
-console.log("\n✅ Aligning dependencies with root overrides...");
+console.log("\n✅ Enforcing constitutional React version...");
 
-execSync("pnpm install -w", { stdio: "inherit" });
+execSync(
+  "pnpm add react react-dom -E && pnpm add -D @types/react @types/react-dom -E",
+  { stdio: "inherit" }
+);
 
 /**
  * Step 4: Patch tsconfig.app.json safely (do not overwrite structure)

@@ -58,13 +58,16 @@ execSync(
 );
 
 /**
- * Step 3.5: Align React versions with root overrides
- * Root pnpm.overrides pins react@19.2.3, ensuring constitutional alignment.
- * Upstream scaffolds may install different versions; overrides correct this.
+ * Step 3.5: Enforce constitutional React version
+ * Root pnpm.overrides pins react@19.1.0 (Expo SDK 54 canonical).
+ * -E flag installs exact version, override guarantees 19.1.0.
  */
-console.log("\n✅ Aligning dependencies with root overrides...");
+console.log("\n✅ Enforcing constitutional React version...");
 
-execSync("pnpm install -w", { stdio: "inherit" });
+execSync(
+  "pnpm add react react-dom -E && pnpm add -D @types/react @types/react-dom -E",
+  { stdio: "inherit" }
+);
 
 /**
  * Step 4: Patch next.config.ts safely

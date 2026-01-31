@@ -159,28 +159,33 @@ if (!fs.existsSync(lockfilePath)) {
   const rawLock = fs.readFileSync(lockfilePath, "utf8");
 
   /**
-   * Correct matching:
-   * ✅ react@18.x.x
-   * ❌ ignore @types/react@...
-   *
-   * This regex ensures "react@" is NOT preceded by "@types/"
+   * Constitutional enforcement:
+   * Fail if ANY React version other than 19.1.0 exists.
+   * This catches drift, not just duplication.
    */
-  const matches =
-    rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
+  const matches = rawLock.match(/(?<!@types\/)react@19\.1\.0/g) || [];
 
-  const unique = [...new Set(matches)];
-
-  if (unique.length === 0) {
-    warn("React runtime not found in lockfile yet (no apps installed).");
-  } else if (unique.length === 1) {
-    ok(`Single React runtime detected (${unique[0]})`);
-  } else {
+  if (matches.length === 0) {
     fail(
-      `Multiple React runtimes detected:\n   ${unique.join(
-        "\n   "
-      )}\n\nThis WILL cause Invalid Hook Call bugs.\nPin React versions immediately.`
+      "Constitutional React version (19.1.0) not found.\n" +
+      "Root pnpm.overrides may not be applied.\n" +
+      "Run: rm -rf node_modules pnpm-lock.yaml && pnpm install"
     );
   }
+
+  // Check for ANY other React version (violation)
+  const allReactVersions = rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
+  const unique = [...new Set(allReactVersions)];
+
+  if (unique.length > 1 || (unique.length === 1 && unique[0] !== "react@19.1.0")) {
+    fail(
+      `Constitutional violation detected:\n   Expected: react@19.1.0\n   Found: ${unique.join(
+        "\n   "
+      )}\n\nThis WILL cause Invalid Hook Call bugs.\nRun clean install immediately.`
+    );
+  }
+
+  ok("Single React runtime detected (react@19.1.0)");
 }
 
 console.log("\n🔎 Checking React dependency law...");
