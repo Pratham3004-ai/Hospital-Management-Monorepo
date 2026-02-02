@@ -81,11 +81,11 @@ process.chdir(workerName);
  */
 console.log("\n✅ Installing shared StudioVault workspace dependencies...");
 
-execSync("pnpm add @studiovault/utils @studiovault/types @studiovault/database @studiovault/storage --workspace ", {
+execSync("pnpm add @template/utils @template/types @template/database @template/storage --workspace ", {
     stdio: "inherit",
 });
 
-execSync("pnpm add -D @studiovault/typescript-config --workspace", {
+execSync("pnpm add -D @template/typescript-config --workspace", {
     stdio: "inherit",
 });
 
@@ -98,7 +98,7 @@ const tsconfigPath = "tsconfig.json";
 
 const desiredTsconfig = `{
   "_studiovault": "StudioVault Monorepo Fix",
-  "extends": "@studiovault/typescript-config/base.json",
+  "extends": "@template/typescript-config/base.json",
 
   "compilerOptions": {
     "types": ["./worker-configuration.d.ts"]
@@ -172,7 +172,7 @@ const entryFile = path.join("src", "index.ts");
 
 fs.writeFileSync(
     entryFile,
-    `import { slugify } from "@studiovault/utils";
+    `import { slugify } from "@template/utils";
 
 export default {
   /**

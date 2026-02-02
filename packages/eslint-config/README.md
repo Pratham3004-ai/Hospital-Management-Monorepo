@@ -1,4 +1,4 @@
-# @studiovault/eslint-config
+# @template/eslint-config
 
 Shared ESLint rules for the entire monorepo.
 

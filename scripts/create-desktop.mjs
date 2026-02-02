@@ -44,11 +44,11 @@ console.log("\n✅ Installing StudioVault shared workspace packages...");
  * Step 3: Install shared deps
  */
 execSync(
-  "pnpm add @studiovault/types @studiovault/utils @studiovault/ui @studiovault/database @studiovault/storage --workspace",
+  "pnpm add @template/types @template/utils @template/ui @template/database @template/storage --workspace",
   { stdio: "inherit" },
 );
 
-execSync("pnpm add -D @studiovault/typescript-config --workspace", {
+execSync("pnpm add -D @template/typescript-config --workspace", {
   stdio: "inherit",
 });
 
@@ -65,7 +65,7 @@ if (fs.existsSync(appTsconfigPath)) {
 
   // Add extends only if missing
   if (!parsed.extends) {
-    parsed.extends = "@studiovault/typescript-config/react.json";
+    parsed.extends = "@template/typescript-config/react.json";
   }
 
   fs.writeFileSync(appTsconfigPath, JSON.stringify(parsed, null, 2));

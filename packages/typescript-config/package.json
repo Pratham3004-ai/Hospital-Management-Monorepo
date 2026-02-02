@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/typescript-config",
+  "name": "@template/typescript-config",
   "version": "1.0.0",
   "private": true,
   "publishConfig": {

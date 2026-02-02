@@ -54,7 +54,7 @@ process.chdir(appName);
 console.log("\n✅ Installing shared StudioVault packages...");
 
 execSync(
-  "pnpm add @studiovault/ui @studiovault/utils @studiovault/types @studiovault/database @studiovault/storage --workspace",
+  "pnpm add @template/ui @template/utils @template/types @template/database @template/storage --workspace",
   { stdio: "inherit" }
 );
 
@@ -90,10 +90,12 @@ const nextConfig: NextConfig = {
    * Workspace packages must be transpiled explicitly.
    */
   transpilePackages: [
-    "@studiovault/ui",
-    "@studiovault/utils",
-    "@studiovault/types"
-  ],
+  "@template/ui",
+  "@template/utils",
+  "@template/types",
+  "@template/database",
+  "@template/storage"
+],
 };
 
 export default nextConfig;

@@ -1,4 +1,4 @@
 {
-  "extends": "@studiovault/typescript-config/react.json",
+  "extends": "@template/typescript-config/react.json",
   "include": ["src"]
 }

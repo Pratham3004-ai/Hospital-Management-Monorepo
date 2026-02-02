@@ -50,14 +50,14 @@ console.log("\n✅ Installing StudioVault contract-only workspace packages...");
  * ❌ ui forbidden in Expo
  */
 execSync(
-  "pnpm add @studiovault/types @studiovault/utils @studiovault/database @studiovault/storage --workspace",
+  "pnpm add @template/types @template/utils @template/database @template/storage --workspace",
   { stdio: "inherit" }
 );
 
 /**
  * Step 4: Add shared TS baseline
  */
-execSync("pnpm add -D @studiovault/typescript-config --workspace", {
+execSync("pnpm add -D @template/typescript-config --workspace", {
   stdio: "inherit",
 });
 

@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/database",
+  "name": "@template/database",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -16,7 +16,7 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@studiovault/typescript-config": "workspace:^",
+    "@template/typescript-config": "workspace:^",
     "tsup": "8.5.0"
   },
   "dependencies": {

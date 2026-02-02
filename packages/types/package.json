@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/types",
+  "name": "@template/types",
   "version": "1.0.0",
   "private": true,
   "types": "./src/index.ts",
@@ -8,6 +8,6 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
-    "@studiovault/typescript-config": "workspace:^"
+    "@template/typescript-config": "workspace:^"
   }
 }

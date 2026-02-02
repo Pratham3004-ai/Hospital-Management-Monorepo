@@ -1,4 +1,4 @@
-# @studiovault/prettier-config
+# @template/prettier-config
 
 Shared Prettier formatting rules for the monorepo.
 

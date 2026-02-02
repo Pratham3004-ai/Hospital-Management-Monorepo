@@ -8,11 +8,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@studiovault/types": "workspace:^",
-    "@studiovault/utils": "workspace:^"
+    "@template/types": "workspace:^",
+    "@template/utils": "workspace:^"
   },
   "devDependencies": {
-    "@studiovault/typescript-config": "workspace:^",
+    "@template/typescript-config": "workspace:^",
     "@types/node": "~20.19.30",
     "tsup": "8.5.0",
     "typescript": "5.9.3"

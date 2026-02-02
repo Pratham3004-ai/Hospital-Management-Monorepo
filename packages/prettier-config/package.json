@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/prettier-config",
+  "name": "@template/prettier-config",
   "version": "1.0.0",
   "private": true,
   "main": "./index.js",

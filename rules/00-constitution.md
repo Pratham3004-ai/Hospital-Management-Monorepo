@@ -188,6 +188,71 @@ This prevents dependency tool fighting.
 
 ---
 
+## 12 — Script Reference (Official Creation Surface)
+
+**File:** `rules/12-scripts-reference.md`
+
+Defines:
+
+- All official app creation commands
+- Script responsibilities and guarantees
+- Canonical command inventory
+- Platform-by-platform scaffolding rules
+
+This prevents manual scaffolding and ensures consistency.
+
+---
+
+## 13 — Script Drift Policy
+
+**File:** `rules/13-script-drift-policy.md`
+
+Defines:
+
+- Scripts wrap official CLIs, never replace them
+- Upstream drift is expected and managed centrally
+- Safe patching doctrine for config files
+- What scripts can and cannot do
+
+This prevents template decay from upstream changes.
+
+---
+
+## 14 — Quickstart Doctrine
+
+**File:** `rules/14-quickstart-new-project.md`
+
+Defines:
+
+- The canonical project creation sequence
+- Toolchain verification requirements
+- Step-by-step app spawning procedures
+- Shared package rules and Windows survival clause
+
+This ensures repeatable, identical project initialization.
+
+---
+
+## 15 — Mobile Contracts Only (UI Forbidden)
+
+**File:** `rules/15-mobile-contracts-only.md`
+
+Defines:
+
+- Expo apps share contracts, not UI components
+- `@studiovault/ui` is forbidden in mobile apps
+- Mobile UI must remain local to each app
+- Enforcement through doctor script
+
+This prevents cross-runtime UI contamination.
+
+---
+
+## 16 — Command Surface Doctrine
+
+**File:** `16-command-surface.md`
+  Humans never run filters manually. The runner is canonical.
+
 # ✅ Sacred Rule Format
 
 Every rule file must include:

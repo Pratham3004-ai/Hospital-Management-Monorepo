@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/ui",
+  "name": "@template/ui",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@studiovault/typescript-config": "workspace:^",
+    "@template/typescript-config": "workspace:^",
     "tsup": "8.5.0"
   },
   "dependencies": {

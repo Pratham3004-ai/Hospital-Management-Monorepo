@@ -149,6 +149,7 @@ ok("No forbidden runtime imports found in packages/*");
  * 3. React Runtime Duplication Check
  * ------------------------------------------ */
 
+
 console.log("\n🔎 Checking for duplicate React runtime versions...");
 
 const lockfilePath = "pnpm-lock.yaml";
@@ -157,6 +158,46 @@ if (!fs.existsSync(lockfilePath)) {
   warn("pnpm-lock.yaml not found. Skipping React duplication check.");
 } else {
   const rawLock = fs.readFileSync(lockfilePath, "utf8");
+
+  
+console.log("\n🔎 Enforcing mobile boundary (Expo must not import @template/ui)...");
+
+const mobileDir = path.join("apps", "mobile");
+
+if (fs.existsSync(mobileDir)) {
+  const mobileApps = fs.readdirSync(mobileDir);
+
+  for (const app of mobileApps) {
+    const appPath = path.join(mobileDir, app);
+
+    if (!fs.statSync(appPath).isDirectory()) continue;
+
+    const files = getSourceFilesRecursive(appPath);
+
+    for (const filePath of files) {
+      const raw = fs.readFileSync(filePath, "utf8");
+
+      if (
+        raw.includes(`@template/ui`) ||
+        raw.includes(`from "@template/ui"`) ||
+        raw.includes(`require("@template/ui")`)
+      ) {
+        fail(
+          `Expo app "${app}" illegally imports @template/ui:\n\n` +
+            `   ${filePath}\n\n` +
+            `Mobile must only share contracts (types/utils/schema).\n` +
+            `UI must remain mobile-local.\n`
+        );
+      }
+    }
+  }
+
+  ok("Mobile boundary upheld (no shared UI imports).");
+} else {
+  warn("apps/mobile not present yet. Skipping mobile boundary check.");
+}
+
+
 
   /**
    * Constitutional enforcement:
@@ -200,47 +241,6 @@ ok("React peer dependency law upheld (UI does not bundle React).");
 /* --------------------------------------------
  * Final Success
  * ------------------------------------------ */
-/* --------------------------------------------
- * 2.5 Mobile Boundary Enforcement (No Shared UI)
- * ------------------------------------------ */
-
-console.log("\n🔎 Enforcing mobile boundary (Expo must not import @studiovault/ui)...");
-
-const mobileDir = path.join("apps", "mobile");
-
-if (fs.existsSync(mobileDir)) {
-  const mobileApps = fs.readdirSync(mobileDir);
-
-  for (const app of mobileApps) {
-    const appPath = path.join(mobileDir, app);
-
-    if (!fs.statSync(appPath).isDirectory()) continue;
-
-    const files = getSourceFilesRecursive(appPath);
-
-    for (const filePath of files) {
-      const raw = fs.readFileSync(filePath, "utf8");
-
-      if (
-        raw.includes(`@studiovault/ui`) ||
-        raw.includes(`from "@studiovault/ui"`) ||
-        raw.includes(`require("@studiovault/ui")`)
-      ) {
-        fail(
-          `Expo app "${app}" illegally imports @studiovault/ui:\n\n` +
-            `   ${filePath}\n\n` +
-            `Mobile must only share contracts (types/utils/schema).\n` +
-            `UI must remain mobile-local.\n`
-        );
-      }
-    }
-  }
-
-  ok("Mobile boundary upheld (no shared UI imports).");
-} else {
-  warn("apps/mobile not present yet. Skipping mobile boundary check.");
-}
-
 
 console.log("\n🎉 StudioVault Doctor: All checks passed.\n");
 process.exit(0);

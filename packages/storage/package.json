@@ -1,5 +1,5 @@
 {
-  "name": "@studiovault/storage",
+  "name": "@template/storage",
   "version": "1.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -15,7 +15,7 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@studiovault/typescript-config": "workspace:^",
+    "@template/typescript-config": "workspace:^",
     "tsup": "8.5.0"
   },
   "dependencies": {
