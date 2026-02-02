@@ -31,10 +31,10 @@ dist/
 
 This applies to:
 
-- `@studiovault/utils`
-- `@studiovault/ui`
-- `@studiovault/database`
-- `@studiovault/storage`
+- `@template/utils`
+- `@template/ui`
+- `@template/database`
+- `@template/storage`
 - future shared packages
 
 The template contract is:

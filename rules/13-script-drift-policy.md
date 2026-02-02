@@ -32,7 +32,7 @@ All `scripts/create-*.mjs` files are:
 They are allowed to do ONLY two things:
 
 1. Call upstream official scaffolds
-2. Apply StudioVault monorepo invariants
+2. Apply Template monorepo invariants
 
 They must never become custom scaffolding engines.
 
@@ -52,7 +52,7 @@ Scripts may do the following:
 ✅ Install workspace dependencies:
 
 ```bash
-pnpm add @studiovault/utils @studiovault/types --workspace
+pnpm add @template/utils @template/types --workspace
 ````
 
 ✅ Patch configs minimally:

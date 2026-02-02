@@ -13,7 +13,7 @@ All applications must be created through official script entrypoints.
 
 These scripts are the **only approved creation interface**.
 
-They wrap upstream CLIs and apply StudioVault monorepo laws:
+They wrap upstream CLIs and apply Template monorepo laws:
 
 - correct folder placement
 - workspace dependency wiring
@@ -66,17 +66,17 @@ Guarantees:
 
 * Workspace packages installed:
 
-  * `@studiovault/ui`
-  * `@studiovault/utils`
-  * `@studiovault/types`
+  * `@template/ui`
+  * `@template/utils`
+  * `@template/types`
 
 * Next.js patched with:
 
 ```ts
 transpilePackages: [
-  "@studiovault/ui",
-  "@studiovault/utils",
-  "@studiovault/types"
+  "@template/ui",
+  "@template/utils",
+  "@template/types"
 ]
 ```
 
@@ -106,9 +106,9 @@ Guarantees:
 
 * Shared deps installed:
 
-  * `@studiovault/ui`
-  * `@studiovault/utils`
-  * `@studiovault/types`
+  * `@template/ui`
+  * `@template/utils`
+  * `@template/types`
 
 * TS config patched minimally (preserves Vite defaults)
 
@@ -133,9 +133,9 @@ Guarantees:
 * Official `create-expo-app`
 * Workspace deps installed:
 
-  * `@studiovault/ui`
-  * `@studiovault/utils`
-  * `@studiovault/types`
+  * `@template/ui`
+  * `@template/utils`
+  * `@template/types`
 
 Expo config is preserved (no destructive overwrite).
 
@@ -166,8 +166,8 @@ fetch()
 
 * Shared workspace deps installed:
 
-  * `@studiovault/utils`
-  * `@studiovault/types`
+  * `@template/utils`
+  * `@template/types`
 
 * No cron triggers exist
 

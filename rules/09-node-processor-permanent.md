@@ -124,7 +124,7 @@ This avoids:
 Processor TypeScript must extend:
 
 ```json
-"extends": "@studiovault/typescript-config/node.json"
+"extends": "@template/typescript-config/node.json"
 ```
 
 This ensures:

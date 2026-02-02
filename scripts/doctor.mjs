@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * StudioVault Doctor Script — Constitutional Validator
+ * Template Doctor Script — Constitutional Validator
  *
  * Purpose:
  * Catch violations BEFORE CI.
  *
  * Checks:
  *  1. Toolchain lock (Node + pnpm)
- *  2. Shared package purity (no forbidden runtime imports)
- *  3. React runtime duplication (real React only, not @types)
+ *  2. Shared package runtime purity
+ *  3. Mobile boundary enforcement (no shared UI)
+ *  4. React runtime duplication
+ *  5. React peer dependency law (UI must not bundle React)
  *
  * Run:
  *   pnpm check:doctor
@@ -24,8 +26,8 @@ import path from "node:path";
  * ------------------------------------------ */
 
 function fail(msg) {
-  console.error("\n❌ StudioVault Doctor Failed:");
-  console.error("   " + msg);
+  console.error("\n❌ Doctor Failed:");
+  console.error("   " + msg + "\n");
   process.exit(1);
 }
 
@@ -50,10 +52,8 @@ function getSourceFilesRecursive(dir) {
 
     if (entry.isDirectory()) {
       results.push(...getSourceFilesRecursive(fullPath));
-    } else {
-      if (fullPath.endsWith(".ts") || fullPath.endsWith(".tsx")) {
-        results.push(fullPath);
-      }
+    } else if (fullPath.endsWith(".ts") || fullPath.endsWith(".tsx")) {
+      results.push(fullPath);
     }
   }
 
@@ -100,16 +100,14 @@ const forbiddenImports = [
 ];
 
 /**
- * Matches all import styles:
- *
- * import fs from "fs"
- * import * as fs from "fs"
- * import { readFile } from "fs"
+ * Matches:
+ * import x from "fs"
+ * require("fs")
  */
 function containsForbiddenImport(raw, mod) {
   const pattern = new RegExp(
     String.raw`from\s+["']${mod}["']|require\(\s*["']${mod}["']\s*\)`,
-    "g"
+    "g",
   );
 
   return pattern.test(raw);
@@ -136,30 +134,21 @@ for (const pkg of packageList) {
     for (const bad of forbiddenImports) {
       if (containsForbiddenImport(raw, bad)) {
         fail(
-          `Forbidden import "${bad}" found in:\n   ${filePath}\n\nShared packages MUST remain runtime-agnostic.`
+          `Forbidden import "${bad}" found in:\n` +
+            `   ${filePath}\n\n` +
+            `Shared packages MUST remain runtime-agnostic.`,
         );
       }
     }
   }
 }
 
-ok("No forbidden runtime imports found in packages/*");
+ok("Shared package purity upheld (no forbidden runtime imports).");
 
 /* --------------------------------------------
- * 3. React Runtime Duplication Check
+ * 3. Mobile Boundary Enforcement
  * ------------------------------------------ */
 
-
-console.log("\n🔎 Checking for duplicate React runtime versions...");
-
-const lockfilePath = "pnpm-lock.yaml";
-
-if (!fs.existsSync(lockfilePath)) {
-  warn("pnpm-lock.yaml not found. Skipping React duplication check.");
-} else {
-  const rawLock = fs.readFileSync(lockfilePath, "utf8");
-
-  
 console.log("\n🔎 Enforcing mobile boundary (Expo must not import @template/ui)...");
 
 const mobileDir = path.join("apps", "mobile");
@@ -177,16 +166,12 @@ if (fs.existsSync(mobileDir)) {
     for (const filePath of files) {
       const raw = fs.readFileSync(filePath, "utf8");
 
-      if (
-        raw.includes(`@template/ui`) ||
-        raw.includes(`from "@template/ui"`) ||
-        raw.includes(`require("@template/ui")`)
-      ) {
+      if (raw.includes(`@template/ui`)) {
         fail(
           `Expo app "${app}" illegally imports @template/ui:\n\n` +
             `   ${filePath}\n\n` +
-            `Mobile must only share contracts (types/utils/schema).\n` +
-            `UI must remain mobile-local.\n`
+            `Mobile apps may ONLY share contracts:\n` +
+            `types, utils, schema. UI must be local.`,
         );
       }
     }
@@ -194,53 +179,74 @@ if (fs.existsSync(mobileDir)) {
 
   ok("Mobile boundary upheld (no shared UI imports).");
 } else {
-  warn("apps/mobile not present yet. Skipping mobile boundary check.");
+  warn("apps/mobile not present yet. Skipping mobile boundary enforcement.");
 }
 
+/* --------------------------------------------
+ * 4. React Runtime Duplication Check
+ * ------------------------------------------ */
 
+console.log("\n🔎 Checking for duplicate React runtime versions...");
+
+const lockfilePath = "pnpm-lock.yaml";
+
+if (!fs.existsSync(lockfilePath)) {
+  warn("pnpm-lock.yaml not found. Skipping React duplication check.");
+} else {
+  const rawLock = fs.readFileSync(lockfilePath, "utf8");
 
   /**
-   * Constitutional enforcement:
-   * 1. Detect all React versions (format-agnostic)
-   * 2. Fail if multiple versions exist
-   * 3. Fail if version doesn't match constitutional 19.1.0
+   * Detect real React installs (NOT @types/react)
    */
-  const all = rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
-  const unique = [...new Set(all)];
+  const matches =
+    rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
+
+  const unique = [...new Set(matches)];
 
   if (unique.length === 0) {
-    warn("React runtime not found in lockfile yet (no apps installed).");
+    warn("React runtime not found yet (no apps installed).");
   } else if (unique.length !== 1) {
     fail(
-      `Multiple React runtimes detected:\n   ${unique.join(
-        "\n   "
-      )}\n\nThis WILL cause Invalid Hook Call bugs.\nRun clean install immediately.`
+      `Multiple React runtimes detected:\n` +
+        unique.map((x) => `   ${x}`).join("\n") +
+        `\n\nThis WILL cause Invalid Hook Call bugs.`,
     );
   } else if (unique[0] !== "react@19.1.0") {
     fail(
-      `React version drift detected:\n   Expected: react@19.1.0\n   Found: ${unique[0]
-      }\n\nConstitutional override not applied.\nRun: rm -rf node_modules pnpm-lock.yaml && pnpm install`
+      `React version drift detected.\n\n` +
+        `Expected: react@19.1.0\n` +
+        `Found:    ${unique[0]}\n\n` +
+        `Run clean install:\n` +
+        `rm -rf node_modules pnpm-lock.yaml && pnpm install`,
     );
   } else {
-    ok("Single React runtime detected (react@19.1.0)");
+    ok("Single React runtime detected (react@19.1.0).");
   }
 }
 
-console.log("\n🔎 Checking React dependency law...");
+/* --------------------------------------------
+ * 5. React Peer Dependency Law
+ * ------------------------------------------ */
 
-const uiPkg = JSON.parse(
-  fs.readFileSync("packages/ui/package.json", "utf8")
-);
+console.log("\n🔎 Checking React peer dependency law (UI must not bundle React)...");
 
-if (uiPkg.dependencies?.react) {
-  fail("packages/ui must NOT list react in dependencies — only peerDependencies.");
+const uiPkgPath = path.join("packages", "ui", "package.json");
+
+if (!fs.existsSync(uiPkgPath)) {
+  warn("packages/ui not present yet. Skipping UI peer dependency check.");
+} else {
+  const uiPkg = JSON.parse(fs.readFileSync(uiPkgPath, "utf8"));
+
+  if (uiPkg.dependencies?.react) {
+    fail("packages/ui MUST NOT list react in dependencies — only peerDependencies.");
+  }
+
+  ok("React peer dependency law upheld (UI does not bundle React).");
 }
-
-ok("React peer dependency law upheld (UI does not bundle React).");
 
 /* --------------------------------------------
  * Final Success
  * ------------------------------------------ */
 
-console.log("\n🎉 StudioVault Doctor: All checks passed.\n");
+console.log("\n🎉 Doctor: All constitutional checks passed.\n");
 process.exit(0);

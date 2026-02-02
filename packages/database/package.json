@@ -20,6 +20,7 @@
     "tsup": "8.5.0"
   },
   "dependencies": {
+    "zod": "^4.3.6",
     "server-only": "^0.0.1"
   }
 }

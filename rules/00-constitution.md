@@ -1,4 +1,4 @@
-# StudioVault Monorepo Constitution (Rules Index)
+# Template Monorepo Constitution (Rules Index)
 
 This folder contains the **non-negotiable laws** of the template.
 
@@ -240,7 +240,7 @@ This ensures repeatable, identical project initialization.
 Defines:
 
 - Expo apps share contracts, not UI components
-- `@studiovault/ui` is forbidden in mobile apps
+- `@template/ui` is forbidden in mobile apps
 - Mobile UI must remain local to each app
 - Enforcement through doctor script
 

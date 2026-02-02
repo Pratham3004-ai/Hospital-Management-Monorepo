@@ -35,10 +35,10 @@ MUST only import **contract-only shared packages**, such as:
 
 ✅ Allowed:
 
-- `@studiovault/types`
-- `@studiovault/utils`
-- `@studiovault/database` (schema/contracts only)
-- `@studiovault/storage` (contracts only)
+- `@template/types`
+- `@template/utils`
+- `@template/database` (schema/contracts only)
+- `@template/storage` (contracts only)
 - validation schemas (Zod, etc.)
 
 These packages must remain runtime-agnostic.
@@ -49,14 +49,14 @@ These packages must remain runtime-agnostic.
 
 Mobile apps MUST NOT import:
 
-- `@studiovault/ui`
+- `@template/ui`
 - any shared React web UI library
 - DOM-based styling or component systems
 
 Example violation:
 
 ```ts
-import { Button } from "@studiovault/ui"; // forbidden
+import { Button } from "@template/ui"; // forbidden
 ````
 
 React Native does not render DOM elements.
@@ -112,7 +112,7 @@ This rule is enforced by:
 Doctor must fail if any file under `apps/mobile/*` imports:
 
 ```
-@studiovault/ui
+@template/ui
 ```
 
 This prevents future contamination.

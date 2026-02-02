@@ -12,7 +12,7 @@ Humans should never need to type:
 
 Therefore:
 
-> StudioVault exposes a single stable command surface for all development work.
+> Template exposes a single stable command surface for all development work.
 
 This rule exists to prevent monorepos from becoming terminal gymnastics.
 
@@ -125,7 +125,7 @@ A template must remain boring to operate.
 
 # ✅ Final Statement
 
-StudioVault survives because humans do not fight tooling.
+Template survives because humans do not fight tooling.
 
 The runner provides one stable interface:
 

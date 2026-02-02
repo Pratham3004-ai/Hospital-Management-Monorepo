@@ -87,7 +87,7 @@ Every creation script must do the following:
 2. Install shared workspace dependencies:
 
 ```bash
-pnpm add @studiovault/utils @studiovault/types ...
+pnpm add @template/utils @template/types ...
 ```
 
 3. Patch configs minimally (never destroy defaults)

@@ -1,4 +1,4 @@
-# StudioVault Monorepo Constitution (`rules/`)
+# Template Monorepo Constitution (`rules/`)
 
 This folder contains the non-negotiable laws of the template.
 
