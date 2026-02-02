@@ -135,8 +135,8 @@ for (const pkg of packageList) {
       if (containsForbiddenImport(raw, bad)) {
         fail(
           `Forbidden import "${bad}" found in:\n` +
-            `   ${filePath}\n\n` +
-            `Shared packages MUST remain runtime-agnostic.`,
+          `   ${filePath}\n\n` +
+          `Shared packages MUST remain runtime-agnostic.`,
         );
       }
     }
@@ -199,7 +199,7 @@ for (const pkg of packageList) {
     if (!pkgJson[field]) {
       fail(
         `Shared package "${pkg}" is missing required field "${field}".\n` +
-          `Every buildable package must emit dist outputs.`,
+        `Every buildable package must emit dist outputs.`,
       );
     }
   }
@@ -210,14 +210,14 @@ for (const pkg of packageList) {
   if (!pkgJson.main?.startsWith("./dist/")) {
     fail(
       `Shared package "${pkg}" violates dist contract:\n` +
-        `main must start with "./dist/"`,
+      `main must start with "./dist/"`,
     );
   }
 
   if (!pkgJson.types?.startsWith("./dist/")) {
     fail(
       `Shared package "${pkg}" violates dist contract:\n` +
-        `types must start with "./dist/"`,
+      `types must start with "./dist/"`,
     );
   }
 
@@ -234,12 +234,39 @@ for (const pkg of packageList) {
   if (!fs.existsSync(srcIndexTs) && !fs.existsSync(srcIndexTsx)) {
     fail(
       `Shared package "${pkg}" is missing src/index.ts (or index.tsx).\n` +
-        `Every shared package must have a canonical entry.`,
+      `Every shared package must have a canonical entry.`,
     );
   }
 }
 
 ok("Shared package completeness upheld (buildable packages are structurally valid).");
+
+console.log("\n🔎 Enforcing shared package completeness (dist + tsup contract)...");
+
+const buildRequired = new Set([
+  "utils",
+  "ui",
+  "database",
+  "storage",
+  "env",
+]);
+
+for (const pkg of packageList) {
+  if (!buildRequired.has(pkg)) continue;
+
+  const pkgJsonPath = path.join(packagesDir, pkg, "package.json");
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
+
+  if (!pkgJson.scripts?.build) {
+    fail(`Shared package "${pkg}" must define a build script (tsup required).`);
+  }
+
+  if (!pkgJson.main?.includes("dist")) {
+    fail(`Shared package "${pkg}" must output to dist/ (main field missing).`);
+  }
+}
+
+ok("Shared package completeness upheld (dist + tsup contract enforced).");
 
 
 /* --------------------------------------------
@@ -294,8 +321,8 @@ for (const pkg of packageList) {
     if (deps[bad]) {
       fail(
         `Shared package "${pkg}" illegally depends on "${bad}".\n\n` +
-          `Shared packages must remain runtime-agnostic.\n` +
-          `Move runtime bindings into apps/* instead.`,
+        `Shared packages must remain runtime-agnostic.\n` +
+        `Move runtime bindings into apps/* instead.`,
       );
     }
   }
@@ -323,9 +350,9 @@ if (fs.existsSync(mobileDir)) {
       if (raw.includes(`@template/ui`)) {
         fail(
           `Expo app "${app}" illegally imports @template/ui:\n\n` +
-            `   ${filePath}\n\n` +
-            `Mobile apps may ONLY share contracts:\n` +
-            `types, utils, schema. UI must be local.`,
+          `   ${filePath}\n\n` +
+          `Mobile apps may ONLY share contracts:\n` +
+          `types, utils, schema. UI must be local.`,
         );
       }
     }
@@ -362,16 +389,16 @@ if (!fs.existsSync(lockfilePath)) {
   } else if (unique.length !== 1) {
     fail(
       `Multiple React runtimes detected:\n` +
-        unique.map((x) => `   ${x}`).join("\n") +
-        `\n\nThis WILL cause Invalid Hook Call bugs.`,
+      unique.map((x) => `   ${x}`).join("\n") +
+      `\n\nThis WILL cause Invalid Hook Call bugs.`,
     );
   } else if (unique[0] !== "react@19.1.0") {
     fail(
       `React version drift detected.\n\n` +
-        `Expected: react@19.1.0\n` +
-        `Found:    ${unique[0]}\n\n` +
-        `Run clean install:\n` +
-        `rm -rf node_modules pnpm-lock.yaml && pnpm install`,
+      `Expected: react@19.1.0\n` +
+      `Found:    ${unique[0]}\n\n` +
+      `Run clean install:\n` +
+      `rm -rf node_modules pnpm-lock.yaml && pnpm install`,
     );
   } else {
     ok("Single React runtime detected (react@19.1.0).");
