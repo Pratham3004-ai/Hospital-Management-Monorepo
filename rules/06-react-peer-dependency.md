@@ -31,8 +31,8 @@ MUST declare React as a peer dependency:
 
 ```json
 "peerDependencies": {
-  "react": "18.x",
-  "react-dom": "18.x"
+  "react": "19.x",
+  "react-dom": "19.x"
 }
 ````
 

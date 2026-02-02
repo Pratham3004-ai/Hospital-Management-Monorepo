@@ -242,34 +242,6 @@ for (const pkg of packageList) {
 
 ok("Shared package completeness upheld (buildable packages are structurally valid).");
 
-console.log("\n🔎 Enforcing shared package completeness (dist + tsup contract)...");
-
-const buildRequired = new Set([
-  "utils",
-  "ui",
-  "database",
-  "storage",
-  "env",
-]);
-
-for (const pkg of packageList) {
-  if (!buildRequired.has(pkg)) continue;
-
-  const pkgJsonPath = path.join(packagesDir, pkg, "package.json");
-  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
-
-  if (!pkgJson.scripts?.build) {
-    fail(`Shared package "${pkg}" must define a build script (tsup required).`);
-  }
-
-  if (!pkgJson.main?.includes("dist")) {
-    fail(`Shared package "${pkg}" must output to dist/ (main field missing).`);
-  }
-}
-
-ok("Shared package completeness upheld (dist + tsup contract enforced).");
-
-
 /* --------------------------------------------
  * 4. Dependency Purity Enforcement
  * ------------------------------------------ */
