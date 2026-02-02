@@ -163,6 +163,7 @@ const exemptPackages = new Set([
   "eslint-config",
   "prettier-config",
   "typescript-config",
+  "types",
 ]);
 
 /**
