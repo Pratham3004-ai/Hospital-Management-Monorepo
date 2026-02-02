@@ -13,7 +13,7 @@ const [, , action, platform, appName] = process.argv;
  */
 
 function fail(msg) {
-  console.error("\n❌ StudioVault Runner Failed:");
+  console.error("\n❌ Template Runner Failed:");
   console.error("   " + msg + "\n");
   process.exit(1);
 }

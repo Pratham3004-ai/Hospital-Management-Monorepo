@@ -38,7 +38,7 @@ execSync(`pnpm create electron-vite@0.7.1 ${appName} --no-install`, {
  */
 process.chdir(appName);
 
-console.log("\n✅ Installing StudioVault shared workspace packages...");
+console.log("\n✅ Installing Template shared workspace packages...");
 
 /**
  * Step 3: Install shared deps

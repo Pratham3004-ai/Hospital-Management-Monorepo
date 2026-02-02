@@ -149,6 +149,160 @@ ok("Shared package purity upheld (no forbidden runtime imports).");
  * 3. Mobile Boundary Enforcement
  * ------------------------------------------ */
 
+/* --------------------------------------------
+ * 3. Shared Package Completeness Enforcement
+ * ------------------------------------------ */
+
+console.log("\n🔎 Enforcing shared package completeness (dist + tsup contract)...");
+
+/**
+ * Packages that are NOT build-output runtime packages.
+ * These are config-only and exempt.
+ */
+const exemptPackages = new Set([
+  "eslint-config",
+  "prettier-config",
+  "typescript-config",
+]);
+
+/**
+ * Required fields for every buildable shared package
+ */
+const requiredFields = ["main", "types", "exports"];
+
+for (const pkg of packageList) {
+  if (exemptPackages.has(pkg)) continue;
+
+  const pkgRoot = path.join(packagesDir, pkg);
+  const pkgJsonPath = path.join(pkgRoot, "package.json");
+  const tsupPath = path.join(pkgRoot, "tsup.config.ts");
+  const srcIndexTs = path.join(pkgRoot, "src", "index.ts");
+  const srcIndexTsx = path.join(pkgRoot, "src", "index.tsx");
+
+  if (!fs.existsSync(pkgJsonPath)) {
+    fail(`Shared package "${pkg}" is missing package.json`);
+  }
+
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
+
+  /**
+   * ✅ 1. Must have build script
+   */
+  if (!pkgJson.scripts?.build) {
+    fail(`Shared package "${pkg}" must define a build script (tsup required).`);
+  }
+
+  /**
+   * ✅ 2. Must declare dist contract fields
+   */
+  for (const field of requiredFields) {
+    if (!pkgJson[field]) {
+      fail(
+        `Shared package "${pkg}" is missing required field "${field}".\n` +
+          `Every buildable package must emit dist outputs.`,
+      );
+    }
+  }
+
+  /**
+   * ✅ 3. Must emit into dist/
+   */
+  if (!pkgJson.main?.startsWith("./dist/")) {
+    fail(
+      `Shared package "${pkg}" violates dist contract:\n` +
+        `main must start with "./dist/"`,
+    );
+  }
+
+  if (!pkgJson.types?.startsWith("./dist/")) {
+    fail(
+      `Shared package "${pkg}" violates dist contract:\n` +
+        `types must start with "./dist/"`,
+    );
+  }
+
+  /**
+   * ✅ 4. Must have tsup config
+   */
+  if (!fs.existsSync(tsupPath)) {
+    fail(`Shared package "${pkg}" is missing tsup.config.ts`);
+  }
+
+  /**
+   * ✅ 5. Must have src entrypoint
+   */
+  if (!fs.existsSync(srcIndexTs) && !fs.existsSync(srcIndexTsx)) {
+    fail(
+      `Shared package "${pkg}" is missing src/index.ts (or index.tsx).\n` +
+        `Every shared package must have a canonical entry.`,
+    );
+  }
+}
+
+ok("Shared package completeness upheld (buildable packages are structurally valid).");
+
+
+/* --------------------------------------------
+ * 4. Dependency Purity Enforcement
+ * ------------------------------------------ */
+
+console.log("\n🔎 Enforcing dependency purity (no runtime-only deps in shared packages)...");
+
+/**
+ * These packages must remain contract-only.
+ * No runtime bindings allowed.
+ */
+const forbiddenDeps = [
+  "pg",
+  "prisma",
+  "@prisma/client",
+  "sqlite3",
+  "better-sqlite3",
+  "mongoose",
+  "nodemailer",
+  "sharp",
+  "canvas",
+  "aws-sdk",
+  "@aws-sdk/client-s3",
+  "@google-cloud/storage",
+];
+
+/**
+ * Config-only packages exempt
+ */
+const exemptPackages2 = new Set([
+  "eslint-config",
+  "prettier-config",
+  "typescript-config",
+]);
+
+for (const pkg of packageList) {
+  if (exemptPackages2.has(pkg)) continue;
+
+  const pkgJsonPath = path.join("packages", pkg, "package.json");
+
+  if (!fs.existsSync(pkgJsonPath)) continue;
+
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
+
+  const deps = {
+    ...(pkgJson.dependencies || {}),
+    ...(pkgJson.optionalDependencies || {}),
+  };
+
+  for (const bad of forbiddenDeps) {
+    if (deps[bad]) {
+      fail(
+        `Shared package "${pkg}" illegally depends on "${bad}".\n\n` +
+          `Shared packages must remain runtime-agnostic.\n` +
+          `Move runtime bindings into apps/* instead.`,
+      );
+    }
+  }
+}
+
+ok("Dependency purity upheld (no forbidden runtime-only deps in shared packages).");
+
 console.log("\n🔎 Enforcing mobile boundary (Expo must not import @template/ui)...");
 
 const mobileDir = path.join("apps", "mobile");

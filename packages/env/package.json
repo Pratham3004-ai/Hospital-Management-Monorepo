@@ -2,7 +2,8 @@
   "name": "@template/env",
   "version": "1.0.0",
   "private": true,
-
+  "type": "module",
+  "source": "./src/index.ts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * StudioVault Web App Creator (Next.js + Tailwind)
+ * Template Web App Creator (Next.js + Tailwind)
  *
  * Creates a monorepo-safe Next.js app under /apps/web.
  * Installs shared packages and patches Next.js config safely.
@@ -47,11 +47,11 @@ execSync(
 );
 
 /**
- * Step 3: Install shared StudioVault workspace packages
+ * Step 3: Install shared Template workspace packages
  */
 process.chdir(appName);
 
-console.log("\n✅ Installing shared StudioVault packages...");
+console.log("\n✅ Installing shared Template packages...");
 
 execSync(
   "pnpm add @template/ui @template/utils @template/types @template/database @template/storage --workspace",
@@ -76,17 +76,17 @@ const raw = fs.readFileSync(nextConfigPath, "utf8");
 /**
  * If already patched (marker present), do nothing.
  */
-if (raw.includes("StudioVault Monorepo Fix")) {
+if (raw.includes("Template Monorepo Fix")) {
   console.log("✅ Already patched. Skipping.");
 } else {
-  console.log("✅ Applying StudioVault transpilePackages patch...");
+  console.log("✅ Applying Template transpilePackages patch...");
 
   const patched = `import type { NextConfig } from "next";
 
-// StudioVault Monorepo Fix
+// Template Monorepo Fix
 const nextConfig: NextConfig = {
   /**
-   * StudioVault Monorepo Fix:
+   * Template Monorepo Fix:
    * Workspace packages must be transpiled explicitly.
    */
   transpilePackages: [

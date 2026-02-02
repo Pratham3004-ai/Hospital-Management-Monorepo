@@ -39,7 +39,7 @@ execSync(
  */
 process.chdir(appName);
 
-console.log("\n✅ Installing StudioVault contract-only workspace packages...");
+console.log("\n✅ Installing Template contract-only workspace packages...");
 
 /**
  * Step 3: Install ONLY portable shared deps

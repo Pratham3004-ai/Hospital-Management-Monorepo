@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * StudioVault Cron Worker Creator
+ * Template Cron Worker Creator
  *
  * Usage:
  *   pnpm create:cron-worker cleanup --cron "0 * /5 * * *" (there is no space between the * and / in * /5 , it is stuffed so that the comment does not break)
@@ -59,7 +59,7 @@ if (!fs.existsSync("apps")) fs.mkdirSync("apps");
 if (!fs.existsSync(path.join("apps", "cron")))
     fs.mkdirSync(path.join("apps", "cron"));
 
-console.log("✅ Creating StudioVault Cron Worker:", workerName);
+console.log("✅ Creating Template Cron Worker:", workerName);
 console.log("⏱️ Schedule:", cronExpr);
 
 /**
@@ -77,9 +77,9 @@ execSync(`pnpm create cloudflare@2.62.5 ${workerName} --no-install`, {
 process.chdir(workerName);
 
 /**
- * Step 3: Install shared StudioVault dependencies
+ * Step 3: Install shared Template dependencies
  */
-console.log("\n✅ Installing shared StudioVault workspace dependencies...");
+console.log("\n✅ Installing shared Template workspace dependencies...");
 
 execSync("pnpm add @template/utils @template/types @template/database @template/storage --workspace ", {
     stdio: "inherit",
@@ -92,12 +92,12 @@ execSync("pnpm add -D @template/typescript-config --workspace", {
 /**
  * Step 4: Patch tsconfig.json safely
  */
-console.log("✅ Ensuring tsconfig.json extends StudioVault baseline...");
+console.log("✅ Ensuring tsconfig.json extends Template baseline...");
 
 const tsconfigPath = "tsconfig.json";
 
 const desiredTsconfig = `{
-  "_studiovault": "StudioVault Monorepo Fix",
+  "_Template": "Template Monorepo Fix",
   "extends": "@template/typescript-config/base.json",
 
   "compilerOptions": {
@@ -112,7 +112,7 @@ const desiredTsconfig = `{
 if (fs.existsSync(tsconfigPath)) {
     const raw = fs.readFileSync(tsconfigPath, "utf8");
 
-    if (raw.includes(`"_studiovault": "StudioVault Monorepo Fix"`)) {
+    if (raw.includes(`"_Template": "Template Monorepo Fix"`)) {
         console.log("✅ Already patched. Skipping.");
     } else {
         try {
@@ -141,14 +141,14 @@ if (!fs.existsSync(wranglerPath)) {
 
 const rawWrangler = fs.readFileSync(wranglerPath, "utf8");
 
-if (rawWrangler.includes("StudioVault Monorepo Fix")) {
+if (rawWrangler.includes("Template Monorepo Fix")) {
     console.log("✅ Already patched. Skipping.");
 } else {
     try {
         // Insert marker and triggers as top-level JSON fields (format-independent)
         const patched = rawWrangler.replace(
             /^\s*\{/,
-            `{\n  "_studiovault": "StudioVault Monorepo Fix",\n  "triggers": {\n    "crons": ["${cronExpr}"]\n  },`
+            `{\n  "_Template": "Template Monorepo Fix",\n  "triggers": {\n    "crons": ["${cronExpr}"]\n  },`
         );
 
         if (patched === rawWrangler) {
@@ -176,7 +176,7 @@ fs.writeFileSync(
 
 export default {
   /**
-   * StudioVault Cron Worker
+   * Template Cron Worker
    * Schedule: ${cronExpr}
    */
   async scheduled(): Promise<void> {

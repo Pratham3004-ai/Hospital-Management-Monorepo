@@ -13,7 +13,7 @@
     "preinstall": "node scripts/preinstall-guard.mjs",
     "dev:web": "node scripts/run.mjs dev web",
     "dev:desktop": "node scripts/run.mjs dev desktop",
-    "dev:mobile": "node scripts/run.mjs start mobile",
+    "dev:mobile": "pnpm --filter \"./apps/mobile/*\" start",
     "dev:api": "node scripts/run.mjs dev api",
     "dev:cron": "node scripts/run.mjs dev cron",
     "dev:all": "node scripts/run.mjs dev all",

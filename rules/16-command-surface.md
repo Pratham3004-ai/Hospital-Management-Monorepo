@@ -139,3 +139,69 @@ No command drift.
 
 This is constitutional.
 
+## Mobile Exception (Expo)
+
+Mobile apps do not use the canonical runner.
+
+Expo does not run with `dev`.
+Expo runs with `start`.
+
+Therefore mobile is executed directly:
+
+```bash
+pnpm run dev:mobile
+This maps to:
+
+bash
+Copy code
+pnpm --filter "./apps/mobile/*" start
+Mobile is intentionally treated as a separate workflow.
+
+yaml
+Copy code
+
+---
+
+## ✅ 4. Why This Is Correct
+
+Mobile is special because:
+
+- Metro bundler ≠ Turbo dev server
+- Expo CLI ≠ Node dev loop
+- React Native ≠ DOM runtime
+- Sharing runner actions adds confusion
+
+So this is not inconsistency.
+
+This is **correct separation of worlds**.
+
+Runner = web/desktop/api/cron/node  
+Mobile = Expo universe
+
+---
+
+# ✅ Final Result
+
+| Platform | Command | Uses Runner? |
+|---------|---------|-------------|
+| Web     | dev:web | ✅ Yes |
+| Desktop | dev:desktop | ✅ Yes |
+| API     | dev:api | ✅ Yes |
+| Cron    | dev:cron | ✅ Yes |
+| Mobile  | dev:mobile | ❌ No |
+
+That’s clean architecture.
+
+---
+
+# ✅ Copy-Paste Final Root Scripts Section
+
+```json
+"dev:web": "node scripts/run.mjs dev web",
+"dev:desktop": "node scripts/run.mjs dev desktop",
+"dev:api": "node scripts/run.mjs dev api",
+"dev:cron": "node scripts/run.mjs dev cron",
+
+"dev:mobile": "pnpm --filter \"./apps/mobile/*\" start",
+
+"dev:all": "node scripts/run.mjs dev all"

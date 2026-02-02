@@ -32,9 +32,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Doctor enforcement
+        run: pnpm check:doctor
+
       - name: Turbo build
         run: pnpm build
 
-      - name: Doctor enforcement
-        run: pnpm check:doctor
+
 

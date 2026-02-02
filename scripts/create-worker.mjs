@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * StudioVault API Worker Creator (HTTP-only)
+ * Template API Worker Creator (HTTP-only)
  *
  * Usage:
  *   pnpm create:worker edge
@@ -38,7 +38,7 @@ if (!fs.existsSync("apps")) fs.mkdirSync("apps");
 if (!fs.existsSync(path.join("apps", "api")))
   fs.mkdirSync(path.join("apps", "api"));
 
-console.log("✅ Creating StudioVault API Worker:", workerName);
+console.log("✅ Creating Template API Worker:", workerName);
 
 /**
  * Step 1: Scaffold Worker with official Cloudflare CLI
@@ -55,9 +55,9 @@ execSync(`pnpm create cloudflare@2.62.5 ${workerName} --no-install`, {
 process.chdir(workerName);
 
 /**
- * Step 3: Install shared StudioVault dependencies
+ * Step 3: Install shared Template dependencies
  */
-console.log("\n✅ Installing shared StudioVault workspace dependencies...");
+console.log("\n✅ Installing shared Template workspace dependencies...");
 
 execSync("pnpm add @template/utils @template/types @template/database @template/storage --workspace", {
   stdio: "inherit",
@@ -70,12 +70,12 @@ execSync("pnpm add -D @template/typescript-config --workspace", {
 /**
  * Step 4: Patch tsconfig.json safely (no blind overwrite)
  */
-console.log("✅ Ensuring tsconfig.json extends StudioVault baseline...");
+console.log("✅ Ensuring tsconfig.json extends Template baseline...");
 
 const tsconfigPath = "tsconfig.json";
 
 const desiredTsconfig = `{
-  "_studiovault": "StudioVault Monorepo Fix",
+  "_Template": "Template Monorepo Fix",
   "extends": "@template/typescript-config/base.json",
 
   "compilerOptions": {
@@ -90,7 +90,7 @@ const desiredTsconfig = `{
 if (fs.existsSync(tsconfigPath)) {
   const raw = fs.readFileSync(tsconfigPath, "utf8");
 
-  if (raw.includes(`"_studiovault": "StudioVault Monorepo Fix"`)) {
+  if (raw.includes(`"_Template": "Template Monorepo Fix"`)) {
     console.log("✅ Already patched. Skipping.");
   } else {
     try {
@@ -116,7 +116,7 @@ const wranglerConfigPath = "wrangler.jsonc";
 if (fs.existsSync(wranglerConfigPath)) {
   const raw = fs.readFileSync(wranglerConfigPath, "utf8");
 
-  if (raw.includes(`"_studiovault": "StudioVault Monorepo Fix"`)) {
+  if (raw.includes(`"_Template": "Template Monorepo Fix"`)) {
     console.log("✅ Already patched. Skipping.");
   } else if (raw.includes('"triggers"')) {
     try {
@@ -129,7 +129,7 @@ if (fs.existsSync(wranglerConfigPath)) {
       // Add marker as top-level JSON field (format-independent)
       const withMarker = cleaned.replace(
         /^\s*\{/,
-        `{\n  "_studiovault": "StudioVault Monorepo Fix",`
+        `{\n  "_Template": "Template Monorepo Fix",`
       );
 
       fs.writeFileSync(wranglerConfigPath, withMarker);
@@ -143,7 +143,7 @@ if (fs.existsSync(wranglerConfigPath)) {
     try {
       const withMarker = raw.replace(
         /^\s*\{/,
-        `{\n  "_studiovault": "StudioVault Monorepo Fix",`
+        `{\n  "_Template": "Template Monorepo Fix",`
       );
       fs.writeFileSync(wranglerConfigPath, withMarker);
       console.log("✅ No triggers found. Worker already HTTP-only.");
@@ -166,7 +166,7 @@ const entryFile = path.join("src", "index.ts");
 if (fs.existsSync(entryFile)) {
   const existing = fs.readFileSync(entryFile, "utf8");
 
-  if (existing.includes("StudioVault API Worker")) {
+  if (existing.includes("Template API Worker")) {
     console.log("✅ Entry already patched. Skipping.");
   } else {
     console.warn("⚠️ Entry exists but differs. Overwriting with template baseline.");
@@ -180,7 +180,7 @@ import type { ApiResponse } from "@template/types";
 
 export default {
   async fetch(): Promise<Response> {
-    const value = slugify("StudioVault API Worker: ${workerName}");
+    const value = slugify("Template API Worker: ${workerName}");
 
     const body: ApiResponse<string> = {
       success: true,
