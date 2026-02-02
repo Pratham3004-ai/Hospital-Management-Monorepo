@@ -29,7 +29,7 @@ process.chdir(baseDir);
 /**
  * Step 1: Official Electron-Vite scaffold
  */
-execSync(`pnpm create electron-vite@latest ${appName}`, {
+execSync(`pnpm create electron-vite@0.7.1 ${appName} --no-install`, {
   stdio: "inherit",
 });
 
@@ -44,7 +44,7 @@ console.log("\n✅ Installing StudioVault shared workspace packages...");
  * Step 3: Install shared deps
  */
 execSync(
-  "pnpm add @studiovault/types @studiovault/utils @studiovault/ui --workspace",
+  "pnpm add @studiovault/types @studiovault/utils @studiovault/ui @studiovault/database @studiovault/storage --workspace",
   { stdio: "inherit" },
 );
 

@@ -27,32 +27,42 @@ console.log("✅ Creating Expo Mobile App:", appName);
 process.chdir(baseDir);
 
 /**
- * Step 1: Official Expo scaffold
+ * Step 1: Official Expo scaffold (pinned, no install)
  */
-execSync(`pnpm create expo-app@latest ${appName}`, {
-  stdio: "inherit",
-});
+execSync(
+  `pnpm dlx create-expo-app@3.5.3 ${appName} --no-install`,
+  { stdio: "inherit" }
+);
 
 /**
  * Step 2: Enter app directory
  */
 process.chdir(appName);
 
-console.log("\n✅ Installing StudioVault shared workspace packages...");
+console.log("\n✅ Installing StudioVault contract-only workspace packages...");
 
 /**
- * Step 3: Install shared deps
+ * Step 3: Install ONLY portable shared deps
+ * ✅ types
+ * ✅ utils
+ * ✅ database
+ * ✅ storage
+ * ❌ ui forbidden in Expo
  */
 execSync(
-  "pnpm add @studiovault/types @studiovault/utils @studiovault/ui --workspace",
-  { stdio: "inherit" },
+  "pnpm add @studiovault/types @studiovault/utils @studiovault/database @studiovault/storage --workspace",
+  { stdio: "inherit" }
 );
 
+/**
+ * Step 4: Add shared TS baseline
+ */
 execSync("pnpm add -D @studiovault/typescript-config --workspace", {
   stdio: "inherit",
 });
 
-console.log("\n✅ Expo config preserved (no tsconfig overwrite).");
+console.log("\n✅ Expo app created with contract-only sharing.");
+console.log("✅ UI is local to mobile (no cross-runtime contamination).");
 
 console.log("\n🎉 Mobile app created successfully!");
 console.log("Next steps:");

@@ -10,6 +10,7 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
+    "preinstall": "node scripts/preinstall-guard.mjs",
     "create:web": "node scripts/create-web.mjs",
     "create:desktop": "node scripts/create-desktop.mjs",
     "create:cron-worker": "node scripts/create-cron-worker.mjs",
@@ -18,6 +19,8 @@
     "create:worker": "node scripts/create-worker.mjs"
   },
   "devDependencies": {
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
     "turbo": "2.8.0",
     "typescript": "5.9.3"
   },

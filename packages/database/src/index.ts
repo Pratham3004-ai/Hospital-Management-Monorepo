@@ -1,21 +1,12 @@
-import "server-only";
+import { z } from "zod";
 
-/*
- * StudioVault Database Contracts
- * No runtime drivers here — only schema + types.
- */
+export const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+});
 
-export type UserID = string;
+export type User = z.infer<typeof UserSchema>;
 
-export interface User {
-  id: UserID;
-  email: string;
-  createdAt: string;
-}
-
-/**
- * Shared table names (portable constants)
- */
 export const Tables = {
-  users: "users"
+  users: "users",
 } as const;

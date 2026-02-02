@@ -67,7 +67,7 @@ console.log("⏱️ Schedule:", cronExpr);
  */
 process.chdir(path.join("apps", "cron"));
 
-execSync(`pnpm create cloudflare@latest ${workerName}`, {
+execSync(`pnpm create cloudflare@2.62.5 ${workerName} --no-install`, {
     stdio: "inherit",
 });
 
@@ -81,7 +81,7 @@ process.chdir(workerName);
  */
 console.log("\n✅ Installing shared StudioVault workspace dependencies...");
 
-execSync("pnpm add @studiovault/utils @studiovault/types --workspace", {
+execSync("pnpm add @studiovault/utils @studiovault/types @studiovault/database @studiovault/storage --workspace ", {
     stdio: "inherit",
 });
 

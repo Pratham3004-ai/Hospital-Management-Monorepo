@@ -35,13 +35,14 @@ process.chdir(baseDir);
 console.log("✅ Creating Next.js + Tailwind app:", appName);
 
 execSync(
-  `pnpm create next-app@latest ${appName} \
+  `pnpm create next-app@16.1.6 ${appName} \
     --ts \
     --eslint \
     --tailwind \
     --src-dir \
     --app \
-    --use-pnpm`,
+    --use-pnpm \
+    --no-install`,
   { stdio: "inherit" }
 );
 
@@ -53,7 +54,7 @@ process.chdir(appName);
 console.log("\n✅ Installing shared StudioVault packages...");
 
 execSync(
-  "pnpm add @studiovault/ui @studiovault/utils @studiovault/types --workspace",
+  "pnpm add @studiovault/ui @studiovault/utils @studiovault/types @studiovault/database @studiovault/storage --workspace",
   { stdio: "inherit" }
 );
 
