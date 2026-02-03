@@ -44,7 +44,7 @@ console.log("\n✅ Installing Template shared workspace packages...");
  * Step 3: Install shared deps
  */
 execSync(
-  "pnpm add @template/types @template/utils @template/ui @template/database @template/storage --workspace",
+  "pnpm add @template/types @template/utils @template/ui @template/database @template/storage @template/env --workspace",
   { stdio: "inherit" },
 );
 
