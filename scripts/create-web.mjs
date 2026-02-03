@@ -41,8 +41,7 @@ execSync(
     --tailwind \
     --src-dir \
     --app \
-    --use-pnpm \
-    --no-install`,
+    --use-pnpm`,
   { stdio: "inherit" }
 );
 
@@ -54,7 +53,7 @@ process.chdir(appName);
 console.log("\n✅ Installing shared Template packages...");
 
 execSync(
-  "pnpm add @template/ui @template/utils @template/types @template/database @template/storage --workspace",
+  "pnpm add @template/ui @template/utils @template/types @template/database @template/storage @template/env --workspace",
   { stdio: "inherit" }
 );
 
