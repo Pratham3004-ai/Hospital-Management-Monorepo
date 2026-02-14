@@ -350,28 +350,42 @@ if (!fs.existsSync(lockfilePath)) {
   const rawLock = fs.readFileSync(lockfilePath, "utf8");
 
   /**
-   * Detect real React installs (NOT @types/react)
+   * Strictly detect real React installs from pnpm lockfile keys.
+   * Example entry in pnpm-lock.yaml:
+   *
+   *   /react@19.1.0:
+   *
+   * We ONLY match exact package keys beginning with /react@
+   * This prevents false positives from:
+   *   - eslint-plugin-react
+   *   - @babel/preset-react
+   *   - babel-plugin-react-*
+   *   - @types/react
    */
   const matches =
-    rawLock.match(/(?<!@types\/)react@[0-9]+\.[0-9]+\.[0-9]+/g) || [];
+    rawLock.match(/\/react@([0-9]+\.[0-9]+\.[0-9]+):/g) || [];
 
-  const unique = [...new Set(matches)];
+  const normalized = matches.map((m) =>
+    m.replace("/", "").replace(":", "")
+  );
+
+  const unique = [...new Set(normalized)];
 
   if (unique.length === 0) {
     warn("React runtime not found yet (no apps installed).");
   } else if (unique.length !== 1) {
     fail(
       `Multiple React runtimes detected:\n` +
-      unique.map((x) => `   ${x}`).join("\n") +
-      `\n\nThis WILL cause Invalid Hook Call bugs.`,
+        unique.map((x) => `   ${x}`).join("\n") +
+        `\n\nThis WILL cause Invalid Hook Call bugs.`,
     );
   } else if (unique[0] !== "react@19.1.0") {
     fail(
       `React version drift detected.\n\n` +
-      `Expected: react@19.1.0\n` +
-      `Found:    ${unique[0]}\n\n` +
-      `Run clean install:\n` +
-      `rm -rf node_modules pnpm-lock.yaml && pnpm install`,
+        `Expected: react@19.1.0\n` +
+        `Found:    ${unique[0]}\n\n` +
+        `Run clean install:\n` +
+        `rm -rf node_modules pnpm-lock.yaml && pnpm install`,
     );
   } else {
     ok("Single React runtime detected (react@19.1.0).");
