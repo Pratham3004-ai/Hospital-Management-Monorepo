@@ -1,0 +1,11 @@
+{
+  "_Template": "Template Monorepo Fix",
+  "extends": "@template/typescript-config/base.json",
+
+  "compilerOptions": {
+    "types": ["./worker-configuration.d.ts"]
+  },
+
+  "include": ["worker-configuration.d.ts", "src/**/*.ts"],
+  "exclude": ["test"]
+}
