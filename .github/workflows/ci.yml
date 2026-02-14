@@ -8,8 +8,10 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   validate:
+    name: CI Validation
     runs-on: ubuntu-latest
 
     steps:
@@ -41,6 +43,3 @@ jobs:
 
       - name: Turbo build
         run: pnpm build
-
-
-
