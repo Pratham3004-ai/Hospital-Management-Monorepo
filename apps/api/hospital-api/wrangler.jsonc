@@ -21,7 +21,7 @@
    * Secrets will override these values automatically.
    */
   "vars": {
-    "SUPABASE_URL": "",
-    "SUPABASE_SERVICE_ROLE_KEY": ""
+    "SUPABASE_URL": "https://wsnsldwnfgdewbpulxep.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbnNsZHduZmdkZXdicHVseGVwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTEzMzYxMywiZXhwIjoyMDg2NzA5NjEzfQ.ilDSmsxybls5NF_htXJB_vNjtbobY10LKYqV_Vtdpwo"
   }
 }

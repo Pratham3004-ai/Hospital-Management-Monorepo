@@ -17,10 +17,17 @@
   },
   "devDependencies": {
     "@template/typescript-config": "workspace:^",
-    "tsup": "8.5.0"
+    "@types/node": "^25.2.3",
+    "@types/pg": "^8.16.0",
+    "drizzle-kit": "^0.31.9",
+    "tsup": "8.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "zod": "^4.3.6",
-    "server-only": "^0.0.1"
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.18.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.3.6"
   }
 }
