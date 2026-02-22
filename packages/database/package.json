@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "source": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "scripts": {

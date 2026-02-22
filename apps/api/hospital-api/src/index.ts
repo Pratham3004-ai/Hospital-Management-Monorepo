@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+// import { db } from "@packages/database/src/db.ts";
 
 export default {
   async fetch(request: Request, env: any): Promise<Response> {
