@@ -14,3 +14,4 @@ export const Tables = {
 
 // 🔹 IMPORTANT: Use .js extension
 export * from "./db.js";
+export * from "./schema.js";
