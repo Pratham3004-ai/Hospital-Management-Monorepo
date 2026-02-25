@@ -28,6 +28,7 @@ coverage/
 .env.production.local
 .env*.local
 
+
 # Logs
 logs/
 *.log
@@ -79,6 +80,12 @@ temp/
 # Monorepo specific
 .turbo
 .changeset/
+
+
+# Cloudflare / Secrets
+wrangler.json
+wrangler.toml
+
 
 # Optional: Uncomment if using these tools
 # .pnpm-store/

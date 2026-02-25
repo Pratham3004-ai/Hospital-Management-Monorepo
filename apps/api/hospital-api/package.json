@@ -18,6 +18,7 @@
 		"wrangler": "^4.65.0"
 	},
 	"dependencies": {
+		"@supabase/supabase-js": "^2.95.3",
 		"@template/database": "workspace:^",
 		"@template/env": "workspace:^",
 		"@template/storage": "workspace:^",
