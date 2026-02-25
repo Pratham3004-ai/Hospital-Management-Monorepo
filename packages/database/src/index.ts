@@ -12,6 +12,4 @@ export const Tables = {
   users: "users",
 } as const;
 
-// 🔹 IMPORTANT: Use .js extension
-export * from "./db.js";
 export * from "./schema.js";

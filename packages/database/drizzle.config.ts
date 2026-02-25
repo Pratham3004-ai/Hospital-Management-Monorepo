@@ -5,6 +5,6 @@ export default {
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: "postgresql://postgres.wsnsldwnfgdewbpulxep:G8$Rsnw35Qyc5mc@aws-1-ap-south-1.pooler.supabase.com:6543/postgres",
   },
 } satisfies Config;
